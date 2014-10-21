@@ -3,6 +3,7 @@ package edu.ucsd.xmlrpc.xmlrpc.multiclient;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.ucsd.xmlrpc.xmlrpc.XmlRpcException;
@@ -65,14 +66,25 @@ public class MultiClient implements AsyncCallback{
 	 * @param args The args to pass to the method.
 	 */
 	public void executeAsync(String method, Object...args) {
-		try {
-			// execute async on some connection
-		  connections[conIndex].executeAsync(method, args);
-			conIndex = (conIndex + 1) % connections.length;
-		} catch (XmlRpcException e) {
-			e.printStackTrace();
-		}
+		executeAsync(method, UUID.randomUUID().toString(), args);
 	}
+
+  /**
+   * Execute the method asynchronously on the servers with the specified args.
+   * @param method The method name to execute. The method name is specified by
+   * "name-of-the-handler-class.method-name". For example to execute the method "sum" in the handler
+   * class "SampleHander", call execute with "SampleHandler.sum".
+   * @param args The args to pass to the method.
+   */
+  public void executeAsync(String method, String jobId, Object...args) {
+    try {
+      // execute async on some connection
+      connections[conIndex].executeAsync(method, jobId, args);
+      conIndex = (conIndex + 1) % connections.length;
+    } catch (XmlRpcException e) {
+      e.printStackTrace();
+    }
+  }
 
   public void executeStreamRequest(String uid, String handlerMethodName, Object[] args) {
     XmlRpcRequest request = new XmlRpcClientRequestImpl(
@@ -115,7 +127,7 @@ public class MultiClient implements AsyncCallback{
 		String message = t.getMessage();
 
 		if (t.getCause() instanceof IOException || message.startsWith("Result not found on server.")) {  // TODO DEMO correct error message
-			// Connection not initiated, or result is not ready. RETRY the job.
+			// connection not initiated, or result is not ready. RETRY the job.
 			if (job == null) {
 				job = new RetryJob(request, 0);
 				retry.put(request.getJobID(), job);

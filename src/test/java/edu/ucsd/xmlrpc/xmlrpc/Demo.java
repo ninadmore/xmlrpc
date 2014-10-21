@@ -44,8 +44,12 @@ public class Demo {
 
 //			waitFor(1000*7);
 
+			client.executeAsync("SampleHandler.sum", "testJobId", 3, 7);
+
 			StreamMapper streamJob = new StreamMapper(client);
-			streamJob.processData("SampleHandler.sum", "test");
+			streamJob.processData("SampleHandler.sum", 6, 8);
+
+			waitFor(1000*3);
 
 			server0.printRequests();
 			server1.printRequests();

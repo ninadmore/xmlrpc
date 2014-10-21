@@ -10,7 +10,7 @@ import edu.ucsd.xmlrpc.xmlrpc.webserver.StoredRequest;
  * server or remote servers. This handler is automatically added to the
  * MultiServer.
  */
-public class CoreHandler {
+public final class CoreHandler {
 
   private MultiServer servlet;
 
@@ -19,30 +19,31 @@ public class CoreHandler {
   }
 
   public Object delegate(String jobId, String methodName, Object[] args) {
+    servlet.client.executeAsync(methodName, jobId, args);
     return jobId + '.' + methodName;
   }
 
   /**
-   * Get the result of a job with the jobID on the server at URL url.
+   * Get the result of a job with the jobId on the server at URL url.
    *
-   * @param jobID The job ID of the job to get.
+   * @param jobId The job ID of the job to get.
    * @param url The url to get it from.
    * @return result
    * @throws XmlRpcException
    */
-  public Object getRemoteResult(String jobID, URL url) throws XmlRpcException {
-    return servlet.client.executeGet(jobID, url);
+  public Object getRemoteResult(String jobId, URL url) throws XmlRpcException {
+    return servlet.client.executeGet(jobId, url);
   }
 
   /**
-   * Get the result of a job with the jobID on this server.
+   * Get the result of a job with the jobId on this server.
    *
-   * @param jobID The job ID of the job to get.
+   * @param jobId The job ID of the job to get.
    * @return result
    * @throws XmlRpcException If result is not found on server or if result is not valid yet.
    */
-  public Object getResult(String jobID) throws XmlRpcException {
-    StoredRequest request = servlet.getRequest(jobID);
+  public Object getResult(String jobId) throws XmlRpcException {
+    StoredRequest request = servlet.getRequest(jobId);
     if (request == null) {
       throw new XmlRpcException("Result not found on server.");
     }

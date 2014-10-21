@@ -9,27 +9,32 @@ import edu.ucsd.xmlrpc.xmlrpc.client.XmlRpcClient;
 import edu.ucsd.xmlrpc.xmlrpc.client.XmlRpcClientConfigImpl;
 
 class MultiClientConnection extends XmlRpcClient {
-	
+
 	private static final int TIMEOUT = 10;
 	private MultiClient client;
-	
+
 	// Represents a single connection between the client and a server.
 	protected MultiClientConnection(String URL, MultiClient c) throws MalformedURLException {
 		super();
 		this.client = c;
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		config.setServerURL(new URL(URL));
-        config.setEnabledForExtensions(true);  
+        config.setEnabledForExtensions(true);
         config.setConnectionTimeout(TIMEOUT * 1000);
         config.setReplyTimeout(TIMEOUT * 1000);
-		
+
 		this.setConfig(config);
 	}
-	
+
 	// Execute on a single server
 	protected void executeAsync(String method, Object...args) throws XmlRpcException {
 		this.executeAsync(method, args, client);
 	}
+
+  // Execute on a single server
+  protected void executeAsync(String method, String jobId, Object...args) throws XmlRpcException {
+    this.executeAsync(method, jobId, args, client);
+  }
 
 	// Execute on a single server
 	protected void executeAsync(XmlRpcRequest request) throws XmlRpcException {
@@ -42,7 +47,7 @@ class MultiClientConnection extends XmlRpcClient {
 		URL newURL = ((XmlRpcClientConfigImpl) connection.getClientConfig()).getServerURL();
 		config.setServerURL(newURL);
 	}
-	
+
 	protected URL getURL() {
 		XmlRpcClientConfigImpl config = (XmlRpcClientConfigImpl) getConfig();
 		return config.getServerURL();

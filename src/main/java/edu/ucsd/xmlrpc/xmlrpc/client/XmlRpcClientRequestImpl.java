@@ -14,7 +14,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 package edu.ucsd.xmlrpc.xmlrpc.client;
 
@@ -36,7 +36,7 @@ public class XmlRpcClientRequestImpl implements XmlRpcRequest {
 	// Ucsd modified code
 	private final String jobID;
 
-	
+
 	/** Creates a new instance.
 	 * @param pConfig The request configuration.
 	 * @param pMethodName The method name being performed.
@@ -57,7 +57,7 @@ public class XmlRpcClientRequestImpl implements XmlRpcRequest {
 		params = pParams == null ? ZERO_PARAMS : pParams;
 		jobID = pJobID;
 	}
-	
+
 	/** Creates a new instance.
 	 * @param pConfig The request configuration.
 	 * @param pMethodName The method name being performed.
@@ -69,7 +69,7 @@ public class XmlRpcClientRequestImpl implements XmlRpcRequest {
 								   String pMethodName, List pParams, String pJobID) {
 		this(pConfig, pMethodName, pParams == null ? null : pParams.toArray(), pJobID);
 	}
-	
+
 	/** Creates a new instance. A job ID is randomly assigned.
 	 * @param pConfig The request configuration.
 	 * @param pMethodName The method name being performed.
@@ -78,7 +78,6 @@ public class XmlRpcClientRequestImpl implements XmlRpcRequest {
 	 */
 	public XmlRpcClientRequestImpl(XmlRpcRequestConfig pConfig,
 								   String pMethodName, Object[] pParams) {
-
 		this(pConfig, pMethodName, pParams, UUID.randomUUID().toString());
 	}
 
@@ -101,18 +100,18 @@ public class XmlRpcClientRequestImpl implements XmlRpcRequest {
 	public Object getParameter(int pIndex) { return params[pIndex]; }
 
 	public XmlRpcRequestConfig getConfig() { return config; }
-	
+
 	public String getJobID() { return jobID; }
-	
+
 	public String toString() {
 		String s = "";
-		
+
 		s += getMethodName() + "(";
 		for (int i = 0; i < getParameterCount() - 1; i++) {
 			s += getParameter(i) + ", ";
 		}
 		s += getParameter(getParameterCount()-1) + ")";
-		
+
 		return s;
 	}
 }

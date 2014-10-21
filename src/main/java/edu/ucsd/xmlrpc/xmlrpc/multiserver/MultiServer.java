@@ -38,14 +38,13 @@ public class MultiServer extends WebServer {
 		setHandlers(requestProcessors);
 
 		// connection to other servers
-		client = new MultiClient(urls, null);
+		client = new MultiClient(urls, new StoreCallbackFactory(this));
 
 		// setup config
 		XmlRpcServerConfigImpl serverConfig =
 				(XmlRpcServerConfigImpl) getXmlRpcServer().getConfig();
 		serverConfig.setEnabledForExtensions(true);
 		serverConfig.setContentLengthOptional(false);
-
 	}
 
 	// add all the request processors to the server
@@ -122,16 +121,14 @@ public class MultiServer extends WebServer {
 		}
 	}
 
-	/**
-	 * Print all the requests that have been processed on the server.
-	 */
+	/** Print all the requests that have been processed on the server. */
 	// TODO DEMO Remove
 	public void printRequests() {
 		String port = this.getPort() + "";
 		System.out.println("Printing all requests on " + port);
 		for (Entry<String, StoredRequest> entry : getStoredRequests()) {
 			XmlRpcClientRequestImpl r = entry.getValue().getRequest();
-			System.out.println(" - " + r.toString());
+			System.out.println(" - jobId: '" + entry.getKey() + "': " + r.toString());
 		}
 		System.out.println("Done printing requests on " + port);
 	}

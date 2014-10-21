@@ -35,7 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import edu.ucsd.xmlrpc.xmlrpc.server.XmlRpcStreamServer;
 import edu.ucsd.xmlrpc.xmlrpc.util.ThreadPool;
 
-
 /**
  * <p>The {@link WebServer} is a minimal HTTP server, that might be used
  * as an embedded web server.</p>

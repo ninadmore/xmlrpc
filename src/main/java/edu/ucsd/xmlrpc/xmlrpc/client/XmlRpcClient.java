@@ -14,7 +14,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 package edu.ucsd.xmlrpc.xmlrpc.client;
 
@@ -106,7 +106,7 @@ public class XmlRpcClient extends XmlRpcController {
 	public void setTransportFactory(XmlRpcTransportFactory pFactory) {
 		transportFactory = pFactory;
 	}
-	
+
 	/** Returns the clients transport factory. The client will use this factory
 	 * for invocation of {@link XmlRpcTransportFactory#getTransport()}
 	 * for any request.
@@ -177,6 +177,12 @@ public class XmlRpcClient extends XmlRpcController {
 							 AsyncCallback pCallback) throws XmlRpcException {
 		executeAsync(getClientConfig(), pMethodName, pParams, pCallback);
 	}
+
+  public void executeAsync(String pMethodName, String jobId, Object[] pParams,
+      AsyncCallback pCallback) throws XmlRpcException {
+    executeAsync(new XmlRpcClientRequestImpl(getClientConfig(), pMethodName, pParams, jobId),
+        pCallback);
+  }
 
 	/** Performs an asynchronous request with the given configuration.
 	 * @param pConfig The request configuration.
