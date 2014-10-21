@@ -14,7 +14,7 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  */
 package edu.ucsd.xmlrpc.xmlrpc.webserver;
 
@@ -26,7 +26,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -76,7 +75,7 @@ import edu.ucsd.xmlrpc.xmlrpc.util.ThreadPool;
 public class WebServer implements Runnable {
 	private class AddressMatcher {
 		private final int pattern[];
-		
+
 		AddressMatcher(String pAddress) {
 			try {
 				pattern = new int[4];
@@ -100,7 +99,7 @@ public class WebServer implements Runnable {
 						+ "\" does not represent a valid IP address");
 			}
 		}
-		
+
 		boolean matches(byte[] pAddress) {
 			for (int i = 0; i < 4; i++)	{
 				if (pattern[i] > 255) {
@@ -120,8 +119,8 @@ public class WebServer implements Runnable {
 	protected final List accept = new ArrayList();
 	protected final List deny = new ArrayList();
 	// Ucsd modified code
-	private ConcurrentHashMap<String,StoredRequest> requests =
-			new ConcurrentHashMap<String,StoredRequest>();
+	private ConcurrentHashMap<String, StoredRequest> requests =
+			new ConcurrentHashMap<String, StoredRequest>();
 	// end
 	protected final XmlRpcStreamServer server = newXmlRpcStreamServer();
 
@@ -132,9 +131,9 @@ public class WebServer implements Runnable {
 	// Inputs to setupServerSocket()
 	private InetAddress address;
 	private int port;
-	
+
 	private boolean paranoid;
-	
+
 	static final String HTTP_11 = "HTTP/1.1";
 	/** Creates a web server at the specified port number.
 	 * @param pPort Port number; 0 for a random port, choosen by the
@@ -143,7 +142,7 @@ public class WebServer implements Runnable {
 	public WebServer(int pPort) {
 		this(pPort, null);
 	}
-	
+
 	/** Creates a web server at the specified port number and IP address.
 	 * @param pPort Port number; 0 for a random port, choosen by the
 	 * operating system.
@@ -153,7 +152,7 @@ public class WebServer implements Runnable {
 		address = pAddr;
 		port = pPort;
 	}
-	
+
 	/**
 	 * Factory method to manufacture the server socket.  Useful as a
 	 * hook method for subclasses to override when they desire
@@ -171,7 +170,7 @@ public class WebServer implements Runnable {
 			throws IOException {
 		return new ServerSocket(pPort, backlog, addr);
 	}
-	
+
 	/**
 	 * Initializes this server's listener socket with the specified
 	 * attributes, assuring that a socket timeout has been set.  The
@@ -214,7 +213,7 @@ public class WebServer implements Runnable {
 			}
 		}
 	}
-	
+
 	/**
 	 * Spawns a new thread which binds this server to the port it's
 	 * configured to accept connections on.
@@ -224,7 +223,7 @@ public class WebServer implements Runnable {
 	 */
 	public void start() throws IOException {
 		setupServerSocket(50);
-		
+
 		// The listener reference is released upon shutdown().
 		if (listener == null) {
 			listener = new Thread(this, "XML-RPC Weblistener");
@@ -232,7 +231,7 @@ public class WebServer implements Runnable {
 			listener.start();
 		}
 	}
-	
+
 	/**
 	 * Switch client filtering on/off.
 	 * @param pParanoid True to enable filtering, false otherwise.
@@ -252,7 +251,7 @@ public class WebServer implements Runnable {
 	protected boolean isParanoid() {
 		return paranoid;
 	}
-	
+
 	/** Add an IP address to the list of accepted clients. The parameter can
 	 * contain '*' as wildcard character, e.g. "192.168.*.*". You must call
 	 * setParanoid(true) in order for this to have any effect.
@@ -264,7 +263,7 @@ public class WebServer implements Runnable {
 	public void acceptClient(String pAddress) {
 		accept.add(new AddressMatcher(pAddress));
 	}
-	
+
 	/**
 	 * Add an IP address to the list of denied clients. The parameter can
 	 * contain '*' as wildcard character, e.g. "192.168.*.*". You must call
@@ -294,13 +293,13 @@ public class WebServer implements Runnable {
 	public void addRequest(String jobID, StoredRequest request) {
 		this.requests.put(jobID, request);
 	}
-	
+
 	// TODO DEMO remove
 	public Set<Entry<String, StoredRequest>> getStoredRequests() {
 		return requests.entrySet();
 	}
 	// end
-	
+
 	/**
 	 * Checks incoming connections to see if they should be allowed.
 	 * If not in paranoid mode, always returns true.
@@ -312,7 +311,7 @@ public class WebServer implements Runnable {
 		if (!paranoid) {
 			return true;
 		}
-		
+
 		int l = deny.size();
 		byte addr[] = s.getInetAddress().getAddress();
 		for (int i = 0; i < l; i++) {
@@ -360,7 +359,7 @@ public class WebServer implements Runnable {
 					} catch (SocketException socketOptEx) {
 						log(socketOptEx);
 					}
-					
+
 					try {
 						if (allowConnection(socket)) {
 					        // set read timeout to 30 seconds
@@ -391,7 +390,7 @@ public class WebServer implements Runnable {
 					log(e);
 				}
 			}
-			
+
 			// Shutdown our Runner-based threads
 			pool.shutdown();
 		}
@@ -400,7 +399,7 @@ public class WebServer implements Runnable {
     protected ThreadPool newThreadPool() {
         return new ThreadPool(server.getMaxThreads(), "XML-RPC");
     }
-	
+
 	/**
 	 * Stop listening on the server port.  Shutting down our {@link
 	 * #listener} effectively breaks it out of its {@link #run()}
@@ -419,7 +418,7 @@ public class WebServer implements Runnable {
             }
 		}
 	}
-	
+
 	/** Returns the port, on which the web server is running.
 	 * This method may be invoked after {@link #start()} only.
 	 * @return Servers port number

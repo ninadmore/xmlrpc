@@ -1,28 +1,22 @@
 package edu.ucsd.xmlrpc.xmlrpc.mapreduce;
 
-import java.util.List;
+import java.util.UUID;
 
 import edu.ucsd.xmlrpc.xmlrpc.multiclient.MultiClient;
 
-/**
- * Work in progress
- */
+public class StreamMapper {
 
-//TODO interface for all mappers?
-public abstract class StreamMapper {
-	public MultiClient client;
-	public StreamReducer reducerCallback;
-	
-	public Object dataStreamLock = new Object();
-	public List<Object> dataStream; // TODO Synchronize
-	
-	public StreamMapper(MultiClient client) {
-		this.client = client;
-	}
-	
-	public abstract Object map();
+  private MultiClient client;
+  private String uid;
+  private int size;
 
-	public void handleResult(Object result) {
-		dataStream.add(result); // TODO synchronize
-	}
+  public StreamMapper(MultiClient client) {
+    this.client = client;
+    uid = UUID.randomUUID().toString();
+  }
+
+  public void processData(String handlerMethodName, Object...args) {
+    client.executeStreamRequest(this.uid + '.' + size, handlerMethodName, args);
+    size++;
+  }
 }

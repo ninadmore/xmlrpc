@@ -11,28 +11,25 @@ import edu.ucsd.xmlrpc.xmlrpc.client.AsyncCallback;
 import edu.ucsd.xmlrpc.xmlrpc.client.XmlRpcClientConfigImpl;
 import edu.ucsd.xmlrpc.xmlrpc.client.XmlRpcClientRequestImpl;
 
-/**
- * A MultiClient can connect to multiple servers.
- */
-
+/** A MultiClient can connect to multiple servers. */
 public class MultiClient implements AsyncCallback{
 
-	private MultiClientConnection[] connections;
-	protected ClientCallbackFactory clientCallbackFactory;
-	
-	private int conInd = 0;
+  private static final String DELEGATOR_METHOD = "CoreHandler.delegate";
 
-	private ConcurrentHashMap<String,RetryJob> retry = new ConcurrentHashMap<String,RetryJob>();
-	
+  protected ClientCallbackFactory clientCallbackFactory;
+	private MultiClientConnection[] connections;
+	private int conIndex = 0;
+
+	private ConcurrentHashMap<String, RetryJob> retry = new ConcurrentHashMap<String, RetryJob>();
+
 	/**
-	 * Create a new MultiClient. This client keeps track of potential servers that it can connect to. 
+	 * Create a new MultiClient. This client keeps track of potential servers that it can connect to.
 	 * Under some fault conditions upon sending a job to the server, the client will try to send
 	 * the job to another server if the job was not initiated, or get the result from another server
 	 * if the job was submitted and the connection to the server was lost.
 	 * @param serverUrls All of the client's potential connections.
 	 * @throws MalformedURLException
 	 */
-
 	public MultiClient(String[] serverUrls, ClientCallbackFactory callback) throws MalformedURLException {
 		// Set a callback that will call handleResult and handleError after fault handling
 		clientCallbackFactory = callback;
@@ -40,10 +37,10 @@ public class MultiClient implements AsyncCallback{
 		// Create a MultiClientConnection for each potential server
 		connections = new MultiClientConnection[serverUrls.length];
 		for (int i = 0; i < serverUrls.length; i++) {
-			connections[i] = new MultiClientConnection(serverUrls[i], this);
+		  connections[i] = new MultiClientConnection(serverUrls[i], this);
 		}
 	}
-	
+
 	/**
 	 * This method is used to get the precomputed result of a job on a specific server.
 	 * @param jobID The job to look for.
@@ -51,7 +48,6 @@ public class MultiClient implements AsyncCallback{
 	 * @return The result of the job
 	 * @throws XmlRpcException
 	 */
-	
 	public Object executeGet(String jobID, URL url) throws XmlRpcException {
 		for (MultiClientConnection con : connections) {
 			if (con.getURL().equals(url)) {
@@ -60,57 +56,64 @@ public class MultiClient implements AsyncCallback{
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Execute the method asynchronously on the servers with the specified args.
-	 * @param method The method name to execute. The method name is specified by 
-	 * "name-of-the-handler-class.method-name". For example to execute the method "sum" in the handler 
+	 * @param method The method name to execute. The method name is specified by
+	 * "name-of-the-handler-class.method-name". For example to execute the method "sum" in the handler
 	 * class "SampleHander", call execute with "SampleHandler.sum".
 	 * @param args The args to pass to the method.
 	 */
-
 	public void executeAsync(String method, Object...args) {
 		try {
 			// execute async on some connection
-			connections[conInd].executeAsync(method, args);
-			conInd = (conInd + 1) % connections.length;
+		  connections[conIndex].executeAsync(method, args);
+			conIndex = (conIndex + 1) % connections.length;
 		} catch (XmlRpcException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+  public void executeStreamRequest(String uid, String handlerMethodName, Object[] args) {
+    XmlRpcRequest request = new XmlRpcClientRequestImpl(
+        connections[conIndex].getClientConfig(), DELEGATOR_METHOD,
+        new Object[] {uid, handlerMethodName, args}, uid);
+    try {
+      connections[conIndex].executeAsync(request);
+    } catch (XmlRpcException e) {
+      e.printStackTrace();
+    }
+  }
+
 	/**
 	 * Set the ClientCallbackFactory.
 	 * @param clientCallbackFactory
 	 */
-
 	public void setClientCallbackFactory(ClientCallbackFactory clientCallbackFactory) {
 		this.clientCallbackFactory = clientCallbackFactory;
 	}
-	
+
 	/**
 	 * Handle the result of an asynchronous call. An instance from the current ClientCallbackFactory
 	 * is created and handleResult is invoked on it.
 	 */
-	
 	public void handleResult(XmlRpcRequest pRequest, Object pResult) {
 		XmlRpcClientRequestImpl request = (XmlRpcClientRequestImpl) pRequest;
-		
+
 		// Job no longer needs to be retried.
 		retry.remove(request.getJobID());
 		clientCallbackFactory.getIntstace().handleResult(request, pResult);
 	}
-	
+
 	/**
 	 * Handle the error of an asynchronous call. An instance from the current ClientCallbackFactory
 	 * is created and handleError is invoked on it after expected faults have been already handled.
 	 */
-
 	public void handleError(XmlRpcRequest pRequest, Throwable t) {
 		XmlRpcClientRequestImpl request = (XmlRpcClientRequestImpl) pRequest;
 		RetryJob job = retry.get(request.getJobID());
 		String message = t.getMessage();
-		
+
 		if (t.getCause() instanceof IOException || message.startsWith("Result not found on server.")) {  // TODO DEMO correct error message
 			// Connection not initiated, or result is not ready. RETRY the job.
 			if (job == null) {
@@ -130,17 +133,16 @@ public class MultiClient implements AsyncCallback{
 			if (job != null) {
 				retry.remove(request.getJobID());
 			}
-			
+
 			XmlRpcClientConfigImpl conf = (XmlRpcClientConfigImpl) request.getConfig();
 			executeAsync("CoreHandler.getRemoteResult", request.getJobID(), conf.getServerURL());
-			
 		} else {
 			// Unexpected error
 			clientCallbackFactory.getIntstace().handleError(request, t);
 		}
 	}
-	
-	private class RetryJob {
+
+  private class RetryJob {
 		public XmlRpcRequest request;
 		public int connectionIndex;
 
