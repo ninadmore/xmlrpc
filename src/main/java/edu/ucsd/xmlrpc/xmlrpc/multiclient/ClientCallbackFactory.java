@@ -9,9 +9,6 @@ import edu.ucsd.xmlrpc.xmlrpc.client.AsyncCallback;
 
 public abstract class ClientCallbackFactory {
 
-	/**
-	 * Get the instance of the AsyncCallback handler.
-	 * @return AsyncCallback handler
-	 */
+	/** Get the instance of the AsyncCallback handler. */
 	public abstract AsyncCallback getIntstace();
 }

@@ -27,50 +27,26 @@ public class MultiServer extends WebServer {
 	 * The requestProcessors are the request processor handlers for the client requests. All methods in these classes
 	 * are reflexively scanned for methods.
 	 * @param urls The server urls of all of the servers to connect.
-	 * @param i The index of this server's url in urls
+	 * @param serverIndex The index of this server's url in urls
 	 * @param requestProcessors An array of request processors.
 	 * @throws MalformedURLException
 	 */
-	public MultiServer(String[] urls, int i, Class<?>[] requestProcessors) throws MalformedURLException {
-		super((new URL(urls[i])).getPort());
+	public MultiServer(String[] urls, int serverIndex, Class<?>[] requestProcessors)
+	    throws MalformedURLException {
+		super((new URL(urls[serverIndex])).getPort());
 
 		// request processors
 		setHandlers(requestProcessors);
 
 		// connection to other servers
 		client = new MultiClient(urls, new StoreCallbackFactory(this));
+		client.setClientIndex(serverIndex); // causes server to skip itself when delegating tasks
 
 		// setup config
 		XmlRpcServerConfigImpl serverConfig =
 				(XmlRpcServerConfigImpl) getXmlRpcServer().getConfig();
 		serverConfig.setEnabledForExtensions(true);
 		serverConfig.setContentLengthOptional(false);
-	}
-
-	// add all the request processors to the server
-	private void setHandlers(Class<?>[] requestProcessors) {
-		PropertyHandlerMapping phm = new PropertyHandlerMapping();
-
-		requestHandlerFactoryFactory = new RequestHandlerFactoryFactory(this, requestProcessors);
-		phm.setRequestProcessorFactoryFactory(requestHandlerFactoryFactory);
-		// add core handler
-		try {
-			phm.addHandler(CoreHandler.class.getSimpleName(), CoreHandler.class);
-		} catch (XmlRpcException e) {
-			e.printStackTrace();
-		}
-
-		// add user defined handlers
-		for (Class<?> c : requestProcessors) {
-			try {
-				phm.addHandler(c.getSimpleName(), c);
-			} catch (XmlRpcException e) {
-				e.printStackTrace();
-			}
-		}
-
-		XmlRpcServer xmlRpcServer = getXmlRpcServer();
-		xmlRpcServer.setHandlerMapping(phm);
 	}
 
 	/**
@@ -104,9 +80,7 @@ public class MultiServer extends WebServer {
 		getXmlRpcServer().setHandlerMapping(phm);
 	}
 
-	/**
-	 * Print all the handlers with their methods on the server.
-	 */
+	/** Print all the handlers with their methods on the server. */
 	public void printHandlers() {
 		try {
 			PropertyHandlerMapping phm = (PropertyHandlerMapping) getXmlRpcServer().getHandlerMapping();
@@ -121,14 +95,41 @@ public class MultiServer extends WebServer {
 		}
 	}
 
+  // add all the request processors to the server
+  private void setHandlers(Class<?>[] requestProcessors) {
+    PropertyHandlerMapping phm = new PropertyHandlerMapping();
+
+    requestHandlerFactoryFactory = new RequestHandlerFactoryFactory(this, requestProcessors);
+    phm.setRequestProcessorFactoryFactory(requestHandlerFactoryFactory);
+    // add core handler
+    try {
+      phm.addHandler(CoreHandler.class.getSimpleName(), CoreHandler.class);
+    } catch (XmlRpcException e) {
+      e.printStackTrace();
+    }
+
+    // add user defined handlers
+    for (Class<?> c : requestProcessors) {
+      try {
+        phm.addHandler(c.getSimpleName(), c);
+      } catch (XmlRpcException e) {
+        e.printStackTrace();
+      }
+    }
+
+    XmlRpcServer xmlRpcServer = getXmlRpcServer();
+    xmlRpcServer.setHandlerMapping(phm);
+  }
+
 	/** Print all the requests that have been processed on the server. */
 	// TODO DEMO Remove
 	public void printRequests() {
 		String port = this.getPort() + "";
 		System.out.println("Printing all requests on " + port);
 		for (Entry<String, StoredRequest> entry : getStoredRequests()) {
-			XmlRpcClientRequestImpl r = entry.getValue().getRequest();
-			System.out.println(" - jobId: '" + entry.getKey() + "': " + r.toString());
+			XmlRpcClientRequestImpl request = entry.getValue().getRequest();
+			System.out.println(" - jobId: '" + entry.getKey() + "': " + request.toString()
+			    + " = " + entry.getValue().getResult() + ", " + entry.getValue().isValid());
 		}
 		System.out.println("Done printing requests on " + port);
 	}

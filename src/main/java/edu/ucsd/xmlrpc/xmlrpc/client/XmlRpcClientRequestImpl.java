@@ -101,17 +101,22 @@ public class XmlRpcClientRequestImpl implements XmlRpcRequest {
 
 	public XmlRpcRequestConfig getConfig() { return config; }
 
+  // Ucsd modified code
 	public String getJobID() { return jobID; }
 
 	public String toString() {
-		String s = "";
-
-		s += getMethodName() + "(";
+		StringBuilder sb = new StringBuilder();
+		sb.append(getMethodName())
+		  .append('(');
 		for (int i = 0; i < getParameterCount() - 1; i++) {
-			s += getParameter(i) + ", ";
+			sb.append(getParameter(i))
+			  .append(", ");
 		}
-		s += getParameter(getParameterCount()-1) + ")";
-
-		return s;
+		if (getParameterCount() > 0) {
+		  sb.append(getParameter(getParameterCount() - 1));
+		}
+		sb.append(')');
+		return sb.toString();
 	}
+	// end
 }

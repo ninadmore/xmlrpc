@@ -12,6 +12,19 @@ import edu.ucsd.xmlrpc.xmlrpc.webserver.StoredRequest;
  */
 public final class CoreHandler {
 
+  public static final String DELEGATOR_METHOD = "CoreHandler.delegate";
+  public static final String FETCH_RESULT_METHOD = "CoreHandler.fetchResult";
+  public static final String FIND_RESULT_METHOD = "CoreHandler.findResult";
+  public static final String GET_REMOTE_RESULT_METHOD = "CoreHandler.getRemoteResult";
+  public static final String GET_RESULT_METHOD = "CoreHandler.getResult";
+  public static final String JOB_ID_FUNCTION_METHOD = "CoreHandler.jobIdFunction";
+
+  public static final String RESULT_NOT_FOUND = "Result not found on server.";
+  public static final String RETRY_SAME_CONNECTION = "retry same connection";
+
+  private static final int MAX_RETRIES = 50;
+  private static final int RETRY_SLEEP_MS = 200;
+
   private MultiServer servlet;
 
   protected CoreHandler(MultiServer servlet) {
@@ -19,8 +32,37 @@ public final class CoreHandler {
   }
 
   public Object delegate(String jobId, String methodName, Object[] args) {
-    servlet.client.executeAsync(methodName, jobId, args);
-    return jobId + '.' + methodName;
+    servlet.client.executeAsyncJob(methodName, jobId, args);
+    // return jobId + '.' + methodName;
+    return Void.TYPE;
+  }
+
+  /** Copies result of jobs to this server. */
+  public Object fetchResult(String jobId) throws XmlRpcException {
+    StoredRequest request = servlet.getRequest(jobId);
+    if (request == null) {
+      servlet.client.executeAsync(FIND_RESULT_METHOD, jobId);
+      throw new XmlRpcException(RETRY_SAME_CONNECTION);
+    } else if (request.isValid()) {
+      return request.getResult();
+    } else {
+      throw new XmlRpcException(RETRY_SAME_CONNECTION);
+    }
+  }
+
+  public Object findResult(String jobId) throws XmlRpcException {
+    StoredRequest request = servlet.getRequest(jobId);
+    if (request != null && !request.getRequest().getMethodName().equals(FIND_RESULT_METHOD)) {
+      for (int retries = 0; !request.isValid() && retries < MAX_RETRIES; retries++) {
+        //System.out.println("not ready: " + jobId + ": " + request.getRequest().getMethodName());
+        sleep();
+        retries++;
+      }
+    }
+    if (request.isValid()) {
+      return request.getResult();
+    }
+    throw new XmlRpcException("don't retry");
   }
 
   /**
@@ -45,13 +87,40 @@ public final class CoreHandler {
   public Object getResult(String jobId) throws XmlRpcException {
     StoredRequest request = servlet.getRequest(jobId);
     if (request == null) {
-      throw new XmlRpcException("Result not found on server.");
+      throw new XmlRpcException(RESULT_NOT_FOUND);
     }
     if (request.isValid()) {
       // TODO DEMO
       return request.getResult().equals(-9) ? "-9" : request.getResult();
     } else {
-      throw new XmlRpcException("Result not found on server.");
+      throw new XmlRpcException(RESULT_NOT_FOUND);
     }
+  }
+
+  public Object jobIdFunction(String methodName, String jobId, Object[] jobIds)
+      throws XmlRpcException {
+    Object[] results = new Object[jobIds.length];
+    for (int i = 0; i < results.length;i++) {
+      String remoteJobId = (String) jobIds[i];
+      try {
+        results[i] = fetchResult(remoteJobId);
+      } catch (XmlRpcException retry) {}
+      for (int retries = 0; results[i] == null && retries < MAX_RETRIES; retries++) {
+        sleep();
+        results[i] = servlet.getRequest(remoteJobId).getResult();
+      }
+      if (results[i] == null) {
+        throw new XmlRpcException("jobs not found on server");
+      }
+    }
+    servlet.client.executeAsyncJob(methodName, jobId, results);
+    // return methodName + " = " + jobIds[0] + " + " + jobIds[1] + " = " + results[0] + " + " + results[1];
+    return Void.TYPE;
+  }
+
+  private void sleep() {
+    try {
+      Thread.sleep(RETRY_SLEEP_MS);
+    } catch (InterruptedException ignore) {}
   }
 }
