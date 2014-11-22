@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="Xmlrpcdemo/libs/xmlrpc.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/xmlrpc/buildjar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcClientWorker.java"/>
+        <folder path="/xmlrpc/doc"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc{XmlRpcException.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcClientDefaults.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcStreamTransportFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc{XmlRpcHandler.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcLocalStreamTransportFactory.java"/>
+        <file path="/xmlrpc/LICENSE"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcLite14HttpTransportFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.parser"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcLite14HttpTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcLocalClientConfig.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc{XmlRpcRequest.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcClientException.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.common"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcHttpClientConfig.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcLocalTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.multiserver"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.jaxb"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcSunHttpTransportFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcSun14HttpTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcSun15HttpTransportFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcHttpTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.serializer"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcStreamTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcTransportFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.util"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc{XmlRpcConfig.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcSunHttpTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcCommonsTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcClient.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc{XmlRpcRequestConfig.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.webserver"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcLocalStreamTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.mapreduce"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcClientRequestImpl.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcSun14HttpTransportFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcCommonsTransportFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.multiclient"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc{XmlRpcConfigImpl.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcLiteHttpTransportFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{TimingOutCallback.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcLocalTransportFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcClientConfig.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcTransportFactoryImpl.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcSun15HttpTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client.util"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.metadata"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcTransportImpl.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcHttpTransportException.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcLiteHttpTransport.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.server"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcClientConfigImpl.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{XmlRpcClientWorkerFactory.java"/>
+        <javaElement handleIdentifier="=xmlrpc/src\/main\/java&lt;edu.ucsd.xmlrpc.xmlrpc.client{AsyncCallback.java"/>
+    </selectedElements>
+</jardesc>

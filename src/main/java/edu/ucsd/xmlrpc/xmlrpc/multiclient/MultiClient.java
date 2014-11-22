@@ -12,6 +12,7 @@ import edu.ucsd.xmlrpc.xmlrpc.client.AsyncCallback;
 import edu.ucsd.xmlrpc.xmlrpc.client.XmlRpcClientConfigImpl;
 import edu.ucsd.xmlrpc.xmlrpc.client.XmlRpcClientRequestImpl;
 import edu.ucsd.xmlrpc.xmlrpc.multiserver.CoreHandler;
+import edu.ucsd.xmlrpc.xmlrpc.multiserver.NoResult;
 
 /** A MultiClient can connect to multiple servers. */
 public class MultiClient implements AsyncCallback{
@@ -120,7 +121,9 @@ public class MultiClient implements AsyncCallback{
 
     // Job no longer needs to be retried.
     retry.remove(request.getJobID());
-    if (pResult != Void.TYPE) {
+
+    // remove suppressed results from map-reduce
+    if (!(pResult instanceof NoResult) && !(pResult instanceof Void)) {
       clientCallbackFactory.getIntstace().handleResult(request, pResult);
     }
   }
@@ -133,8 +136,9 @@ public class MultiClient implements AsyncCallback{
     XmlRpcClientRequestImpl request = (XmlRpcClientRequestImpl) pRequest;
     RetryJob job = retry.get(request.getJobID());
     String message = t.getMessage();
+    // System.out.println("err: " + message);
 
-    if (t.getCause() instanceof IOException || message.equals(CoreHandler.RESULT_NOT_FOUND)) {  // TODO DEMO correct error message
+    if (t.getCause() instanceof IOException || message.equals(CoreHandler.RESULT_NOT_FOUND)) {
       // connection not initiated, or result is not ready. RETRY the job.
       if (job == null) {
         job = new RetryJob(request, 0);
@@ -153,7 +157,7 @@ public class MultiClient implements AsyncCallback{
       try {
         connections[conIndex].executeAsync(request);
       } catch (XmlRpcException ignore) {}
-    } else if (message.startsWith("Server Disconnected")) { // TODO DEMO correct error message
+    } else if (message.startsWith("Server Disconnected")) {
       // Job was submitted but the server was disconnected. GET the job.
       if (job != null) {
         retry.remove(request.getJobID());

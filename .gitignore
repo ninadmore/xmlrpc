@@ -2,4 +2,5 @@
 .project
 .settings
 doc/
+opencv/
 target/

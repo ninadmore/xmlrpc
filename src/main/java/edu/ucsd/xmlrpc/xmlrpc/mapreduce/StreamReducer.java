@@ -2,16 +2,27 @@ package edu.ucsd.xmlrpc.xmlrpc.mapreduce;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
+import edu.ucsd.xmlrpc.xmlrpc.client.XmlRpcClientRequestImpl;
 import edu.ucsd.xmlrpc.xmlrpc.multiserver.CoreHandler;
 
 public abstract class StreamReducer {
 
   private static final char DELIMITER = '.';
+  // jobs encoded as "uuid.##"
+  private static final int JOB_INDEX = UUID.randomUUID().toString().length() + 1;
 
   private StreamMapper mapper;
   private Iterator<String> mapJobIdIterator;
   private int size;
+
+  public static int getjobIndex(XmlRpcClientRequestImpl request) {
+    try {
+      return -Integer.parseInt(request.getJobID().substring(JOB_INDEX)) - 1;
+    } catch (Exception ignore) {}
+    return -1;
+  }
 
   public StreamReducer(StreamMapper mapper) {
     this.mapper = mapper;
@@ -58,6 +69,7 @@ public abstract class StreamReducer {
   private class ResultIterator implements Iterator<Class<Void>> {
 
     int jobIndex = -1;
+    String baseJobId = UUID.randomUUID().toString();
 
     @Override
     public boolean hasNext() {
@@ -67,8 +79,10 @@ public abstract class StreamReducer {
     @Override
     public Class<Void> next() {
       if (hasNext()) {
-        mapper.client.executeAsync(
-            CoreHandler.FETCH_RESULT_METHOD, mapper.jobId + DELIMITER + jobIndex--);
+        String fetchJobId = mapper.jobId + DELIMITER + jobIndex;
+        String execJobId = baseJobId + DELIMITER + jobIndex;
+        jobIndex--;
+        mapper.client.executeAsyncJob(CoreHandler.FETCH_RESULT_METHOD, execJobId, fetchJobId);
         return Void.TYPE;
       }
       throw new NoSuchElementException("no more jobs");

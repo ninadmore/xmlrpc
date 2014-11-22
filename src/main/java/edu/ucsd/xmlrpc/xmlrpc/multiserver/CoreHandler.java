@@ -22,7 +22,7 @@ public final class CoreHandler {
   public static final String RESULT_NOT_FOUND = "Result not found on server.";
   public static final String RETRY_SAME_CONNECTION = "retry same connection";
 
-  private static final int MAX_RETRIES = 50;
+  private static final int MAX_RETRIES = 200;
   private static final int RETRY_SLEEP_MS = 200;
 
   private MultiServer servlet;
@@ -34,7 +34,7 @@ public final class CoreHandler {
   public Object delegate(String jobId, String methodName, Object[] args) {
     servlet.client.executeAsyncJob(methodName, jobId, args);
     // return jobId + '.' + methodName;
-    return Void.TYPE;
+    return new NoResult();
   }
 
   /** Copies result of jobs to this server. */
@@ -59,7 +59,7 @@ public final class CoreHandler {
         retries++;
       }
     }
-    if (request.isValid()) {
+    if (request != null && request.isValid()) {
       return request.getResult();
     }
     throw new XmlRpcException("don't retry");
@@ -105,9 +105,12 @@ public final class CoreHandler {
       try {
         results[i] = fetchResult(remoteJobId);
       } catch (XmlRpcException retry) {}
-      for (int retries = 0; results[i] == null && retries < MAX_RETRIES; retries++) {
+      for (int retries = 0; results[i] == null && retries < MAX_RETRIES * 2; retries++) {
         sleep();
-        results[i] = servlet.getRequest(remoteJobId).getResult();
+        StoredRequest request = servlet.getRequest(remoteJobId);
+        if (request != null && request.isValid()) {
+          results[i] = request.getResult();
+        }
       }
       if (results[i] == null) {
         throw new XmlRpcException("jobs not found on server");
@@ -115,7 +118,7 @@ public final class CoreHandler {
     }
     servlet.client.executeAsyncJob(methodName, jobId, results);
     // return methodName + " = " + jobIds[0] + " + " + jobIds[1] + " = " + results[0] + " + " + results[1];
-    return Void.TYPE;
+    return new NoResult();
   }
 
   private void sleep() {

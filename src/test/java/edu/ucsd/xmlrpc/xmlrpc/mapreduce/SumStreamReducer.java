@@ -5,7 +5,7 @@ import java.util.List;
 
 public class SumStreamReducer extends StreamReducer {
 
-  List</*jobId*/String> args = new LinkedList<>();
+  List</*jobId*/String> args = new LinkedList();
 
   public SumStreamReducer(StreamMapper mapper) {
     super(mapper);
